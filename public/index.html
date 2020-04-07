@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <!-- <div id="app"></div> -->
+    <!-- built files will be auto injected -->
+
+    <h1>Detect Faces:</h1>
+    Enter the URL to an image that includes a face or faces, then click
+    the <strong>Analyze face</strong> button.<br><br>
+    Image to analyze: <input type="text" name="inputImage" id="inputImage"
+        value="" />
+        <!-- value="https://upload.wikimedia.org/wikipedia/commons/c/c3/RH_Louise_Lillian_Gish.jpg" -->
+    <button onclick="processImage()">Analyze face</button><br><br>
+    <div id="wrapper" style="width:1020px; display:table;">
+        <div id="jsonOutput" style="width:600px; display:table-cell;">
+            Response:<br><br>
+            <textarea id="responseTextArea" class="UIInput"
+                style="width:580px; height:400px;"></textarea>
+        </div>
+        <div id="imageDiv" style="width:420px; display:table-cell;">
+            Source image:<br><br>
+            <img id="sourceImage" width="400" />
+        </div>
+    </div>
+
+  </body>
+</html>
+
+<style>
+  /* html, body {margin: 0; height: 100%; overflow: hidden} */
+</style>
+
+<script type="text/javascript">
+  function processImage() {
+      // Replace <Subscription Key> with your valid subscription key.
+      var subscriptionKey = "70985bf471dd47afbc64da7427c4bc9c";
+  
+      var uriBase =
+          "https://faceapispiegel.cognitiveservices.azure.com/face/v1.0/detect";
+  
+      // Request parameters.
+      var params = {
+          "returnFaceId": "true",
+          "returnFaceLandmarks": "false",
+          "returnFaceAttributes":
+              "age,gender,headPose,smile,facialHair,glasses,emotion," +
+              "hair,makeup,occlusion,accessories,blur,exposure,noise"
+      };
+  
+      // Display the image.
+      var sourceImageUrl = document.getElementById("inputImage").value;
+      document.querySelector("#sourceImage").src = sourceImageUrl;
+  
+      // Perform the REST API call.
+      $.ajax({
+          url: uriBase + "?" + $.param(params),
+  
+          // Request headers.
+          beforeSend: function(xhrObj){
+              xhrObj.setRequestHeader("Content-Type","application/json");
+              xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
+          },
+  
+          type: "POST",
+  
+          // Request body.
+          data: '{"url": ' + '"' + sourceImageUrl + '"}',
+      })
+  
+      .done(function(data) {
+          // Show formatted JSON on webpage.
+          $("#responseTextArea").val(JSON.stringify(data, null, 2));
+      })
+  
+      .fail(function(jqXHR, textStatus, errorThrown) {
+          // Display error message.
+          var errorString = (errorThrown === "") ?
+              "Error. " : errorThrown + " (" + jqXHR.status + "): ";
+          errorString += (jqXHR.responseText === "") ?
+              "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
+                  jQuery.parseJSON(jqXHR.responseText).message :
+                      jQuery.parseJSON(jqXHR.responseText).error.message;
+          alert(errorString);
+      });
+  };
+</script>
