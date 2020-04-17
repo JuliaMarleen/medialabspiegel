@@ -5,6 +5,9 @@
 npm install
 ```
 
+Make a copy of "keys.js.copy", rename it to "key.js" and add your application keys there.
+_ask Tim for upload keys_
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

@@ -2,9 +2,8 @@
     <div class="light-green--text" style="padding: 50px;">
         <h1>TAKE A PICTURE</h1>
         <p>And find out what we know about you....</p>
-        Link van de foto: <input type="text" name="inputImage" id="inputImage"
-          style="width:50%; background-color: white;"
-        value="https://m.media-amazon.com/images/M/MV5BMTM0ODU5Nzk2OV5BMl5BanBnXkFtZTcwMzI2ODgyNQ@@._V1_.jpg" />
+        <video id="player" controls autoplay></video>
+        <canvas id="canvas" width=1280 height=960 hidden></canvas>
         <v-btn class="ml-5" v-on:click="processImage()">Analyze face</v-btn><br>
         <v-row id="wrapper">
             <v-col cols="8" id="jsonOutput">
@@ -53,173 +52,195 @@
     </div>
 </template>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script>
+import keys from '../../public/key';
+
 export default {
   name: 'FaceAnalyzer',
-  data () {
+  data() {
     return {
       information: null,
-    }
+      imageUrl: null,
+      context: null,
+      canvas: null,
+      player: null,
+    };
+  },
+  mounted() {
+    this.player = document.getElementById('player');
+    this.canvas = document.getElementById('canvas');
+    this.context = this.canvas.getContext('2d');
+
+    const constraints = {
+      video: true,
+    };
+
+    // Attach the video stream to the video element and autoplay.
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        this.player.srcObject = stream;
+      });
   },
   methods: {
     processHair() {
-        var string = '';
-        if( this.information[0].faceAttributes.hair.bald < 0.8){
-            if( this.information[0].faceAttributes.hair.hairColor[0].color === 'brown'){
-                string =
-                'Je hebt bruin haar en hebt daardoor een grotere kans op Diabetes';
-            }
-            else{
-                string =
-                'Je hebt geen bruin haar en hebt daardoor een grotere kans op Corona';
-            }
+      let string = '';
+      if (this.information[0].faceAttributes.hair.bald < 0.8) {
+        if (this.information[0].faceAttributes.hair.hairColor[0].color === 'brown') {
+          string = 'Je hebt bruin haar en hebt daardoor een grotere kans op Diabetes';
+        } else {
+          string = 'Je hebt geen bruin haar en hebt daardoor een grotere kans op Corona';
         }
-        else{
-            string = null;
-        }
-        return string;
+      } else {
+        string = null;
+      }
+      return string;
     },
     processFace() {
-        var string = '';
-        var headWidth = this.information[0].faceRectangle.width;
-        var eyePosition =
-            this.information[0].faceLandmarks.pupilRight.x -
-            this.information[0].faceLandmarks.pupilLeft.x;
-        var distanceEyes = eyePosition / headWidth;
-        if( this.information[0].faceAttributes.glasses !== 'Sunglasses' ){
-            if( distanceEyes > 0.45){
-                string =
-                'Je ogen staan ver uit elkaar,dit geeft je een groter risico op mentale problemen';
-            }
-            else{
-                string =
-                'Je ogen staan dicht bij elkaar, Dit geeft je een groter risico op een aanrijding';
-            }
+      let string = '';
+      const headWidth = this.information[0].faceRectangle.width;
+      const eyePosition = this.information[0].faceLandmarks.pupilRight.x
+            - this.information[0].faceLandmarks.pupilLeft.x;
+      const distanceEyes = eyePosition / headWidth;
+      if (this.information[0].faceAttributes.glasses !== 'Sunglasses') {
+        if (distanceEyes > 0.45) {
+          string = 'Je ogen staan ver uit elkaar,dit geeft je een groter risico op mentale problemen';
+        } else {
+          string = 'Je ogen staan dicht bij elkaar, Dit geeft je een groter risico op een aanrijding';
         }
-        return string;
+      }
+      return string;
     },
     processFaceHair() {
-        var string = '';
+      let string = '';
 
-        if(this.information[0].faceAttributes.gender === 'male'){
-            if( this.information[0].faceAttributes.facialHair.moustache < 0.3 &&
-            this.information[0].faceAttributes.facialHair.beard < 0.3 &&
-            this.information[0].faceAttributes.facialHair.sideburns < 0.3){
-                string = 'Weinig dominantie, grote kans op werkeloosheid';
-            }
-            if( this.information[0].faceAttributes.facialHair.moustache >= 0.3){
-                string = 'Dominantie, grote kans op fysieke problemen';
-            }
+      if (this.information[0].faceAttributes.gender === 'male') {
+        if (this.information[0].faceAttributes.facialHair.moustache < 0.3
+            && this.information[0].faceAttributes.facialHair.beard < 0.3
+            && this.information[0].faceAttributes.facialHair.sideburns < 0.3) {
+          string = 'Weinig dominantie, grote kans op werkeloosheid';
         }
-        else{
-            string = null;
+        if (this.information[0].faceAttributes.facialHair.moustache >= 0.3) {
+          string = 'Dominantie, grote kans op fysieke problemen';
         }
-        return string;
+      } else {
+        string = null;
+      }
+      return string;
     },
     processMakeUp() {
-        var string = '';
+      let string = '';
 
-        if(this.information[0].faceAttributes.gender === 'female'){
-            if( this.information[0].faceAttributes.makeup.eyeMakeup !== 0 ||
-            this.information[0].faceAttributes.makeup.lipMakeup !== 0){
-                string = 'Dragen van make up geeft grotere kans op huidziektes';
-            }
-            else{
-                string = 'Geen make up geeft grotere kans op eenzaamheid'
-            }
+      if (this.information[0].faceAttributes.gender === 'female') {
+        if (this.information[0].faceAttributes.makeup.eyeMakeup !== 0
+            || this.information[0].faceAttributes.makeup.lipMakeup !== 0) {
+          string = 'Dragen van make up geeft grotere kans op huidziektes';
+        } else {
+          string = 'Geen make up geeft grotere kans op eenzaamheid';
         }
-        else{
-            string = null
-        }
-        return string;
+      } else {
+        string = null;
+      }
+      return string;
     },
-    processFacePosition(){
-        var string = '';
+    processFacePosition() {
+      let string = '';
 
-        if( this.information[0].faceAttributes.headPose.pitch < -5 ){
-            string =
-            'Je hoofd buigt naar beneden, onzekerheid geeft grotere kans op hart en vaat ziektes';
-        }
-        if( this.information[0].faceAttributes.headPose.pitch > 5 ){
-            string =
-            'Je hoofd buigt omhoog, risicogedrag geeft grotere kans op ongelukken'
-        }
-        return string;
+      if (this.information[0].faceAttributes.headPose.pitch < -5) {
+        string = 'Je hoofd buigt naar beneden, onzekerheid geeft grotere kans op hart en vaat ziektes';
+      }
+      if (this.information[0].faceAttributes.headPose.pitch > 5) {
+        string = 'Je hoofd buigt omhoog, risicogedrag geeft grotere kans op ongelukken';
+      }
+      return string;
     },
-    processSmile(){
-        var string = '';
+    processSmile() {
+      let string = '';
 
-        if( this.information[0].faceAttributes.smile > 0.5 ){
-            string = 'Je lacht, grotere kans op roekeloosheid';
-        }
-        else{
-            string = 'Je lacht niet, grotere kans op depressie';
-        }
-        return string;
+      if (this.information[0].faceAttributes.smile > 0.5) {
+        string = 'Je lacht, grotere kans op roekeloosheid';
+      } else {
+        string = 'Je lacht niet, grotere kans op depressie';
+      }
+      return string;
     },
-    processGlasses(){
-        var string = '';
+    processGlasses() {
+      let string = '';
 
-        if( this.information[0].faceAttributes.glasses === 'NoGlasses' ){
-            string = 'Je heb geen bril, geen bescherming, grotere kans op schade in je oog';
-        }
-        if( this.information[0].faceAttributes.glasses === 'ReadingGlasses' ){
-            string = 'Je hebt een bril, dit kan alleen nog maar bergafwaards gaan';
-        }
-        if( this.information[0].faceAttributes.glasses === 'Sunglasses' ){
-            string = 'Je draagt een zonnebril, onzekerheid geeft meer ricico op ziektes';
-        }
-        return string;
+      if (this.information[0].faceAttributes.glasses === 'NoGlasses') {
+        string = 'Je heb geen bril, geen bescherming, grotere kans op schade in je oog';
+      }
+      if (this.information[0].faceAttributes.glasses === 'ReadingGlasses') {
+        string = 'Je hebt een bril, dit kan alleen nog maar bergafwaards gaan';
+      }
+      if (this.information[0].faceAttributes.glasses === 'Sunglasses') {
+        string = 'Je draagt een zonnebril, onzekerheid geeft meer ricico op ziektes';
+      }
+      return string;
     },
-    processImage() {
+    async uploadImage() {
+      const dataUrl = this.canvas.toDataURL('image/jpeg');
+
+      const dataArray = dataUrl.split(';');
+      const base64Image = dataArray[1].split(',')[1];// In this case "iVBORw0KGg...."
+
+      const formData = new FormData();
+
+      formData.append('key', keys.UPLOADKEY);
+      formData.append('file_input', base64Image);
+
+      let jsonResponse;
+
+      try {
+        const res = await fetch('https://upload.borowy.nl/api/base64upload', {
+          method: 'POST',
+          redirect: 'follow',
+          referrerPolicy: 'no-referrer',
+          body: formData,
+        });
+        jsonResponse = await res.json();
+      } catch (err) {
+        // eslint-disable-next-line
+        console.log(err);
+      }
+      return jsonResponse.URL;
+    },
+    async processImage() {
+      this.context.drawImage(this.player, 0, 0, this.canvas.width, this.canvas.height);
+
       // Replace <Subscription Key> with your valid subscription key.
-      const subscriptionKey = 'blehh';
       const uriBase = 'https://faceapispiegel.cognitiveservices.azure.com/face/v1.0/detect';
 
       // Request parameters.
       const params = {
-        'returnFaceId': 'true',
-        'returnFaceLandmarks': 'true',
-        'returnFaceAttributes':
-            'age,gender,headPose,smile,facialHair,glasses,emotion,' +
-            'hair,makeup,occlusion,accessories,blur,exposure,noise',
+        returnFaceId: 'true',
+        returnFaceLandmarks: 'true',
+        returnFaceAttributes:
+            'age,gender,headPose,smile,facialHair,glasses,emotion,'
+            + 'hair,makeup,occlusion,accessories,blur,exposure,noise',
       };
 
       // Display the image.
-      let sourceImageUrl = document.getElementById('inputImage').value;
-      document.querySelector('#sourceImage').src = sourceImageUrl;
+      const imageUrl = await this.uploadImage();
+      document.querySelector('#sourceImage').src = imageUrl;
 
-      // Perform the REST API call.
-      $.ajax({
-          url: uriBase + '?' + $.param(params),
+      const url = new URL(uriBase);
+      url.search = new URLSearchParams(params).toString();
 
-          // Request headers.
-          beforeSend: function(xhrObj){
-              xhrObj.setRequestHeader('Content-Type','application/json');
-              xhrObj.setRequestHeader('Ocp-Apim-Subscription-Key', subscriptionKey);
-          },
-
-          type: 'POST',
-
-          // Request body.
-          data: '{"url": ' + '"' + sourceImageUrl + '"}',
-      })
-      .done(data => (this.information = data))
-
-      .fail(function(jqXHR, textStatus, errorThrown) {
-          // Display error message.
-          let errorString = (errorThrown === "") ?
-              "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-          errorString += (jqXHR.responseText === "") ?
-              "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                  jQuery.parseJSON(jqXHR.responseText).message :
-                      jQuery.parseJSON(jqXHR.responseText).error.message;
-          alert(errorString);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'Ocp-Apim-Subscription-Key': keys.SUBSCRIPTIONKEY,
+        },
+        body: JSON.stringify({
+          url: imageUrl,
+        }),
       });
+
+      this.information = await res.json();
     },
-  }
-}
+  },
+};
 </script>
 
 <style>
