@@ -20,6 +20,10 @@
                         <b>Leeftijd:</b> {{ this.information[0].faceAttributes.age }}</p>
                     <p v-if="this.information">
                         <b>Glimlach:</b> {{ this.processSmile() }}</p>
+
+                    <info-graph text="kans op aardappel"
+                      :number="this.information[0].faceAttributes.smile"/>
+
                     <p v-if="this.processFacePosition()">
                         <b>Hoofdpositie:</b> {{ this.processFacePosition() }}<br>
                     </p>
@@ -53,10 +57,14 @@
 </template>
 
 <script>
+import InfoGraph from '@/components/InfoGraph.vue';
 import keys from '../../public/key';
 
 export default {
   name: 'FaceAnalyzer',
+  components: {
+    InfoGraph,
+  },
   data() {
     return {
       information: null,
