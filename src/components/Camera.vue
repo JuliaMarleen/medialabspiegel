@@ -4,7 +4,7 @@
       <div class="overlay">
         <div class="center">
           <h1>Wil je meer over jezelf te weten komen?</h1>
-          <v-btn class="mt-6" color="success">Ja! Laat maar zien</v-btn>
+          <v-btn class="mt-6" @click="processImage" color="success">Ja! Laat maar zien</v-btn>
           <div class="take-me-down">
             <a href="">Klik Hier voor de algemene voorwaarden</a>
           </div>
@@ -18,7 +18,7 @@
 import keys from '../../public/key';
 
 export default {
-  name: 'FaceAnalyzer',
+  name: 'Camera',
   data() {
     return {
       information: null,
@@ -88,7 +88,6 @@ export default {
 
       // Display the image.
       const imageUrl = await this.uploadImage();
-      document.querySelector('#sourceImage').src = imageUrl;
 
       const url = new URL(uriBase);
       url.search = new URLSearchParams(params).toString();
@@ -105,6 +104,7 @@ export default {
       });
 
       this.information = await res.json();
+      this.$emit('uploaded', this.information);
     },
   },
 };

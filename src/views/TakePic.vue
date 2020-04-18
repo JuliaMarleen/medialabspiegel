@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <camera/>
-    <face-analyzer hidden/>
+    <camera v-if="!information" @uploaded="setInfo"/>
+    <face-analyzer v-if="information" v-bind:faceData="information"/>
   </div>
 </template>
 
@@ -11,7 +11,17 @@ import FaceAnalyzer from '@/components/FaceAnalyzer.vue';
 import Camera from '@/components/Camera.vue';
 
 export default {
-  name: 'Home',
+  name: 'TakePic',
+  data() {
+    return {
+      information: null,
+    };
+  },
+  methods: {
+    setInfo(data) {
+      this.information = data;
+    },
+  },
   components: {
     FaceAnalyzer,
     Camera,
