@@ -104,7 +104,7 @@ export default {
       });
 
       this.information = await res.json();
-      this.$emit('uploaded', this.information);
+      this.$emit('uploaded', this.information, imageUrl);
     },
   },
 };

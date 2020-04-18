@@ -1,11 +1,11 @@
 <template>
   <div class="ma-5">
-      <p>{{this.text}}</p>
-      <p>{{this.number}}</p>
+      <!-- <p>{{this.text}}</p> -->
+      <!-- <p>{{this.number}}</p> -->
       <!-- <div class="pie"></div><br> -->
 
       <ul class="graph">
-        <li class="percent20" v-bind:style="{ color: activeColor, width: percentage() + '%' }">
+        <li class="percent20" v-bind:style="{ background: activeColor, width: percentage() + '%' }">
             {{ this.percentage() + '%'}}</li>
       </ul>
   </div>
@@ -15,26 +15,37 @@
 export default {
   name: 'InforGraph',
   props: {
-    text: String,
     number: Number,
   },
   data() {
     return {
-      activeColor: 'white',
-    //   fontSize: this.number,
+      activeColor: 'green',
     };
   },
   methods: {
     percentage() {
-      let newNum = this.number;
-      console.log(newNum);
-      if (this.number < 0.5) {
-        newNum = 1 - this.number;
-        console.log(newNum);
+      let num = this.number;
+      if (num > 1 || num < 0) {
+        let newNum = this.number;
+        if (this.number < 0) {
+          newNum = this.number * -1;
+        }
+        num = newNum * 4;
       }
-      const perc = newNum * 100;
-      console.log(perc);
-      return perc;
+      if (num <= 1 && num >= 0) {
+        let newNum = this.number;
+        if (this.number < 0.5) {
+          newNum = 1 - this.number;
+        }
+        num = (newNum - 0.5) * 200;
+      }
+      if (num > 40 && num < 70) {
+        this.activeColor = 'orange';
+      }
+      if (num > 70) {
+        this.activeColor = 'red';
+      }
+      return num.toFixed(1);
     },
   },
 };
