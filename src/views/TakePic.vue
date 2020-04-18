@@ -1,21 +1,30 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld text="Send Picture" route="/about"/> -->
-    <face-analyzer/>
+    <camera v-if="!information" @uploaded="setInfo"/>
+    <face-analyzer v-if="information" v-bind:faceData="information"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue';
 import FaceAnalyzer from '@/components/FaceAnalyzer.vue';
+import Camera from '@/components/Camera.vue';
 
 export default {
-  name: 'Home',
+  name: 'TakePic',
+  data() {
+    return {
+      information: null,
+    };
+  },
+  methods: {
+    setInfo(data) {
+      this.information = data;
+    },
+  },
   components: {
-    // HelloWorld,
     FaceAnalyzer,
+    Camera,
   },
 };
 </script>
