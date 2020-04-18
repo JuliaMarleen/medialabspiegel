@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <camera v-if="!information" @uploaded="setInfo"/>
-    <face-analyzer v-if="information" v-bind:faceData="information"/>
+    <face-analyzer v-if="information" v-bind:faceData="information" v-bind:imageUrl="imageUrl"/>
   </div>
 </template>
 
@@ -15,11 +15,13 @@ export default {
   data() {
     return {
       information: null,
+      imageUrl: null,
     };
   },
   methods: {
-    setInfo(data) {
+    setInfo(data, img) {
       this.information = data;
+      this.imageUrl = img;
     },
   },
   components: {
