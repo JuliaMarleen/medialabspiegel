@@ -1,21 +1,20 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <!-- <HelloWorld text="Send Picture" route="/about"/> -->
-    <face-analyzer/>
+    <camera/>
+    <face-analyzer hidden/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue';
 import FaceAnalyzer from '@/components/FaceAnalyzer.vue';
+import Camera from '@/components/Camera.vue';
 
 export default {
   name: 'Home',
   components: {
-    // HelloWorld,
     FaceAnalyzer,
+    Camera,
   },
 };
 </script>
