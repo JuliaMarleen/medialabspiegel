@@ -2,7 +2,7 @@
     <div class="light-green--text" style="padding: 50px;">
         <v-row id="wrapper">
             <v-col cols="6" id="imageDiv">
-                <img :src="imageUrl" width="100%"/>
+                <img :src="imageUrl" width="100%" />
             </v-col>
             <v-col cols="6">
               <div v-if="this.processHair()">
