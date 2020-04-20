@@ -6,7 +6,7 @@
           <h1>Wil je meer over jezelf te weten komen?</h1>
           <v-btn class="mt-6" @click="processImage" color="success">Ja! Laat maar zien</v-btn>
           <div class="take-me-down">
-            <a href="">Klik Hier voor de algemene voorwaarden</a>
+            <router-link to="Voorwaarden">Klik Hier voor de algemene voorwaarden</router-link>
           </div>
         </div>
       </div>
