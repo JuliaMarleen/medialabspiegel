@@ -13,7 +13,7 @@
             <span>Ja! Laat maar zien</span>
           </v-btn>
           <div class="take-me-down">
-            <a href="">Klik Hier voor de algemene voorwaarden</a>
+            <router-link to="Voorwaarden">Klik Hier voor de algemene voorwaarden</router-link>
           </div>
         </div>
       </div>
