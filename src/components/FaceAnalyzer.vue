@@ -1,10 +1,10 @@
 <template>
     <div class="light-green--text" style="padding: 50px;">
         <v-row id="wrapper">
-            <v-col cols="4" id="imageDiv">
-                <img :src="imageUrl" width="300" />
+            <v-col cols="6" id="imageDiv">
+                <img :src="imageUrl" width="100%"/>
             </v-col>
-            <v-col cols="8">
+            <v-col cols="6">
               <div v-if="this.processHair()">
                 <h2>Kenmerk: {{this.hairColor}} haar</h2>
                 <p>{{ this.processHair() }}</p></div>
