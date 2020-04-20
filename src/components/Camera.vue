@@ -10,7 +10,7 @@
           </div>
         </div>
       </div>
-      <canvas id="canvas" width=1280 height=960 hidden></canvas>
+      <canvas id="canvas"></canvas>
     </div>
 </template>
 
@@ -34,7 +34,11 @@ export default {
     this.context = this.canvas.getContext('2d');
 
     const constraints = {
-      video: true,
+      video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        facingMode: 'user',
+      },
     };
 
     // Attach the video stream to the video element and autoplay.
@@ -72,6 +76,8 @@ export default {
       return jsonResponse.URL;
     },
     async processImage() {
+      this.canvas.width = this.player.videoWidth;
+      this.canvas.height = this.player.videoHeight;
       this.context.drawImage(this.player, 0, 0, this.canvas.width, this.canvas.height);
 
       // Replace <Subscription Key> with your valid subscription key.
