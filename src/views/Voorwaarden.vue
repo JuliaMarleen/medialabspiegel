@@ -42,6 +42,9 @@ export default {
   name: 'Home',
   components: {
   },
+  created() {
+    this.$gtag.event('Voorwaarden', { action: 'viewed' });
+  },
 };
 </script>
 
