@@ -1,10 +1,10 @@
 <template>
     <div class="light-green--text" style="padding: 50px;">
         <v-row id="wrapper">
-            <v-col cols="6" id="imageDiv">
+            <v-col cols="4" id="imageDiv">
                 <img :src="imageUrl" width="100%" />
             </v-col>
-            <v-col cols="6">
+            <v-col cols="8">
               <div v-if="this.processHair()">
                 <h2>Kenmerk: {{this.hairColor}} haar</h2>
                 <p>{{ this.processHair() }}</p></div>
@@ -21,7 +21,8 @@
                     <p v-if="this.faceData">
                         <b>Geslacht:</b> {{ this.faceData[0].faceAttributes.gender }}</p>
                     <p v-if="this.faceData">
-                        <b>Leeftijd:</b> {{ this.faceData[0].faceAttributes.age }}</p>
+                        <b>Leeftijd:</b> {{ this.faceData[0].faceAttributes.age }},
+                        {{this.processAge()}}</p>
                     <p v-if="this.processGlasses()">
                         <b>Bril:</b> {{ this.processGlasses() }}</p>
                     <p v-if="this.faceData">
@@ -83,14 +84,23 @@ export default {
       let string = '';
       if (this.faceData[0].faceAttributes.hair.bald < 0.8) {
         if (this.faceData[0].faceAttributes.hair.hairColor[0].color === 'brown') {
-          string = 'Je hebt bruin haar en hebt daardoor een grotere kans op Diabetes';
+          string = 'Je hebt bruin haar, je wordt minder snel aangesproken door aantrekkelijke mensen';
           this.hairColor = 'bruin';
         } else {
-          string = 'Je hebt geen bruin haar en hebt daardoor een grotere kans op Corona';
+          string = 'Je hebt geen bruin haar en komt daardoor minder slim over';
           this.hairColor = 'geen bruin';
         }
       } else {
         string = null;
+      }
+      return string;
+    },
+    processAge() {
+      let string = '';
+      if (this.faceData[0].faceAttributes.age < 45) {
+        string = 'Je bent jong en dus heb je nog weinig levensevaring, waardoor je te weinig kennis hebt om te stemmen';
+      } else {
+        string = 'Je bent oud en leeft niet echt meer in het heden';
       }
       return string;
     },
